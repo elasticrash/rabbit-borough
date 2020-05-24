@@ -11,4 +11,4 @@ To fit my needs
 
 25/05/2020
 
-* added ConsumerConfiguration
+* added ConsumerConfiguration, ConnectionProperties and BindingProperties

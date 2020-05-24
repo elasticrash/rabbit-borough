@@ -16,15 +16,16 @@ pub struct SetupModel {
 }
 
 pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
-    let channel = create_channel(build_url(config).as_str()).await;
+    let channel = create_channel(build_url(config.clone()).as_str()).await;
     let queue = channel
         .queue_declare(
-            "hello",
+            config.clone().queue,
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
         .await;
     let exchange = create_exchange(
+        config.clone().exchange,
         channel.clone(),
         ExchangeDeclareOptions {
             passive: false,
@@ -36,7 +37,13 @@ pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
     )
     .await;
 
-    let binding = create_exchange_queue_binding(channel.clone(), "hello", "main.x", "rust").await;
+    let binding = create_exchange_queue_binding(
+        channel.clone(),
+        config.clone().queue,
+        config.clone().exchange,
+        config.clone().routing_key,
+    )
+    .await;
 
     return SetupModel {
         channel,
@@ -78,10 +85,14 @@ async fn create_channel<'a>(addr: &'a str) -> Channel {
 }
 
 /// create an exchange
-async fn create_exchange(channel: Channel, options: ExchangeDeclareOptions) -> Result<(), Error> {
+async fn create_exchange(
+    exchange: &str,
+    channel: Channel,
+    options: ExchangeDeclareOptions,
+) -> Result<(), Error> {
     let exchange = channel
         .exchange_declare(
-            "main.x",
+            exchange,
             ExchangeKind::Fanout,
             options,
             FieldTable::default(),

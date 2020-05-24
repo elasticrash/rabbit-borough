@@ -14,13 +14,16 @@ fn main() {
     };
 
     let setup_config = ConsumerConfiguration {
-        host: &config.host,
-        port: &config.port,
-        vhost: &config.vhost,
-        username: &config.username,
-        password: &config.password,
-        heartbeat: &config.heartbeat,
-        connection_timeout: &config.connection_timeout,
+        host: &config.connection.host,
+        port: &config.connection.port,
+        vhost: &config.connection.vhost,
+        username: &config.connection.username,
+        password: &config.connection.password,
+        heartbeat: &config.connection.heartbeat,
+        connection_timeout: &config.connection.connection_timeout,
+        queue: &config.binding.queue,
+        exchange: &config.binding.exchange,
+        routing_key: &config.binding.routing_key,
     };
 
     LocalPool::new().run_until(async {
@@ -39,8 +42,8 @@ fn main() {
         let consumer = model
             .channel
             .basic_consume(
-                "hello",
-                "rust",
+                &config.binding.queue,
+                "",
                 BasicConsumeOptions::default(),
                 FieldTable::default(),
             )

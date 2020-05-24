@@ -1,9 +1,16 @@
 {
-    "host": "127.0.0.1",
-    "port": 5672,
-    "vhost": "/",
-    "heartbeat": 10,
-    "connection_timeout": 1000,
-    "username": "secure",
-    "password": "secure"
+    "connection": {
+        "host": "127.0.0.1",
+        "port": 5672,
+        "vhost": "/",
+        "heartbeat": 10,
+        "connection_timeout": 1000,
+        "username": "secure",
+        "password": "secure"
+    },
+    "binding": {
+        "queue": "myQueue",
+        "exchange": "myExchange",
+        "routing_key": "myKey"
+    }
 }
