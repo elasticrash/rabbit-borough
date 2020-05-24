@@ -9,9 +9,9 @@ use lapin::Queue;
 
 pub struct SetupModel {
     pub channel: Channel,
-    pub queue: Queue,
-    pub exchange: (),
-    pub binding: (),
+    pub queue: Result<Queue, Error>,
+    pub exchange: Result<(), Error>,
+    pub binding: Result<(), Error>,
 }
 
 pub async fn setup_consumer(addr: &'static str) -> SetupModel {
@@ -22,9 +22,7 @@ pub async fn setup_consumer(addr: &'static str) -> SetupModel {
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
-        .await
-        .unwrap();
-
+        .await;
     let exchange = create_exchange(
         channel.clone(),
         ExchangeDeclareOptions {
@@ -35,12 +33,9 @@ pub async fn setup_consumer(addr: &'static str) -> SetupModel {
             nowait: false,
         },
     )
-    .await
-    .unwrap();
+    .await;
 
-    let binding = create_exchange_queue_binding(channel.clone(), "hello", "main.x", "rust")
-        .await
-        .unwrap();
+    let binding = create_exchange_queue_binding(channel.clone(), "hello", "main.x", "rust").await;
 
     return SetupModel {
         channel,

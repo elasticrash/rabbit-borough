@@ -5,7 +5,6 @@ use lapin::options::BasicConsumeOptions;
 use lapin::types::FieldTable;
 
 fn main() {
-    std::env::set_var("RUST_LOG", "info");
     let addr: &'static str = "amqp://127.0.0.1:5672/%2f?heartbeat=10&connection_timeout=1000";
     LocalPool::new().run_until(async {
         let model = consumer::setup::setup_consumer(addr).await;
@@ -20,12 +19,11 @@ fn main() {
         println!("[{}] exchange status: {:?}", line!(), model.exchange);
         println!("[{}] bind status: {:?}", line!(), model.binding);
 
-        println!("will consume");
         let consumer = model
             .channel
             .basic_consume(
                 "hello",
-                "my_consumer",
+                "rust",
                 BasicConsumeOptions::default(),
                 FieldTable::default(),
             )
