@@ -1,13 +1,24 @@
+mod configuration;
 mod consumer;
+use crate::consumer::consumer_configuration::ConsumerConfiguration;
+use configuration::config_model::JSONConfiguration;
 use futures_executor::LocalPool;
 use lapin::options::BasicAckOptions;
 use lapin::options::BasicConsumeOptions;
 use lapin::types::FieldTable;
 
 fn main() {
-    let addr: &'static str = "amqp://127.0.0.1:5672/%2f?heartbeat=10&connection_timeout=1000";
+    let config: JSONConfiguration = match configuration::reader::read("./config.json") {
+        Ok(data) => data,
+        Err(why) => panic!("Error {:?}", why),
+    };
+
+    let setup_config = ConsumerConfiguration {
+        address: &config.address,
+    };
+
     LocalPool::new().run_until(async {
-        let model = consumer::setup::setup_consumer(addr).await;
+        let model = consumer::setup::setup_consumer(setup_config).await;
 
         println!(
             "[{}] channel status: {:?}",

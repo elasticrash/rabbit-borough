@@ -784,6 +784,8 @@ dependencies = [
  "futures",
  "futures-executor",
  "lapin",
+ "serde",
+ "serde_json",
  "simplelog",
 ]
 

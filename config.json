@@ -1,0 +1,3 @@
+{
+    "address": "amqp://127.0.0.1:5672/%2f?heartbeat=10&connection_timeout=1000"
+}

@@ -1,4 +1,5 @@
 use crate::consumer::connection_manager;
+use crate::consumer::consumer_configuration::ConsumerConfiguration;
 use lapin::options::ExchangeDeclareOptions;
 use lapin::options::*;
 use lapin::types::FieldTable;
@@ -14,8 +15,8 @@ pub struct SetupModel {
     pub binding: Result<(), Error>,
 }
 
-pub async fn setup_consumer(addr: &'static str) -> SetupModel {
-    let channel = create_channel(addr).await;
+pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
+    let channel = create_channel(config.address).await;
     let queue = channel
         .queue_declare(
             "hello",
@@ -46,7 +47,7 @@ pub async fn setup_consumer(addr: &'static str) -> SetupModel {
 }
 
 /// create a channel
-async fn create_channel(addr: &'static str) -> Channel {
+async fn create_channel<'a>(addr: &'a str) -> Channel {
     let conn = connection_manager::get_connection(&addr, 0).await;
     println!(
         "[{}] connection state: {:?}",

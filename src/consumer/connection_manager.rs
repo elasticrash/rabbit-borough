@@ -3,7 +3,7 @@ use lapin::{Connection, ConnectionProperties};
 use std::{thread, time};
 
 /// Returns a Connection, retries x times
-pub fn get_connection(addr: &'static str, retry: u64) -> BoxFuture<'static, Connection> {
+pub fn get_connection<'a>(addr: &'a str, retry: u64) -> BoxFuture<'a, Connection> {
     return Box::pin(
         async move {
             let con_promise = Connection::connect(&addr, ConnectionProperties::default());
