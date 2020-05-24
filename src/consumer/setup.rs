@@ -16,7 +16,7 @@ pub struct SetupModel {
 }
 
 pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
-    let channel = create_channel(config.address).await;
+    let channel = create_channel(build_url(config).as_str()).await;
     let queue = channel
         .queue_declare(
             "hello",
@@ -44,6 +44,22 @@ pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
         exchange,
         binding,
     };
+}
+
+/// build URL
+fn build_url(config: ConsumerConfiguration<'_>) -> String {
+    let url = format!(
+        "amqp://{}:{}@{}:{}/{}?hearthbeat={}&connection_timeout={}",
+        config.username,
+        config.password,
+        config.host,
+        config.port,
+        config.vhost,
+        config.heartbeat,
+        config.connection_timeout
+    );
+
+    return url;
 }
 
 /// create a channel

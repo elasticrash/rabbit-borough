@@ -14,7 +14,13 @@ fn main() {
     };
 
     let setup_config = ConsumerConfiguration {
-        address: &config.address,
+        host: &config.host,
+        port: &config.port,
+        vhost: &config.vhost,
+        username: &config.username,
+        password: &config.password,
+        heartbeat: &config.heartbeat,
+        connection_timeout: &config.connection_timeout,
     };
 
     LocalPool::new().run_until(async {

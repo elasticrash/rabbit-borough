@@ -1,3 +1,9 @@
 {
-    "address": "amqp://127.0.0.1:5672/%2f?heartbeat=10&connection_timeout=1000"
+    "host": "127.0.0.1",
+    "port": 5672,
+    "vhost": "/",
+    "heartbeat": 10,
+    "connection_timeout": 1000,
+    "username": "secure",
+    "password": "secure"
 }

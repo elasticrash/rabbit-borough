@@ -6,4 +6,9 @@ To fit my needs
 
 
 24/05/2020
-everything is hardcoded !! ;)
+
+* everything is hardcoded !! ;)
+
+25/05/2020
+
+* added ConsumerConfiguration
