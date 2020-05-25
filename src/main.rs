@@ -3,9 +3,13 @@ mod consumer;
 use crate::consumer::consumer_configuration::ConsumerConfiguration;
 use configuration::config_model::JSONConfiguration;
 use futures_executor::LocalPool;
+use lapin::message::Delivery;
 use lapin::options::BasicAckOptions;
 use lapin::options::BasicConsumeOptions;
+use lapin::options::BasicNackOptions;
 use lapin::types::FieldTable;
+use lapin::types::LongLongUInt;
+use lapin::Channel;
 
 fn main() {
     let config: JSONConfiguration = match configuration::reader::read("./config.json") {
@@ -53,12 +57,55 @@ fn main() {
         for delivery in consumer {
             println!("received message: {:?}", delivery);
             if let Ok(delivery) = delivery {
-                model
-                    .channel
-                    .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
-                    .await
-                    .expect("basic_ack");
+                handler(&model.channel, delivery).await;
             }
         }
     })
+}
+
+pub enum HandleMessageResult {
+    Ack,
+    NackNoRequeue,
+    NackWithRequeue,
+}
+
+// function to handle the message
+async fn handler(channel: &Channel, delivery: Delivery) {
+    action_result(HandleMessageResult::Ack, &channel, delivery.delivery_tag).await;
+}
+
+// output of that handler
+async fn action_result(result: HandleMessageResult, channel: &Channel, tag: LongLongUInt) {
+    match result {
+        HandleMessageResult::Ack => {
+            channel
+                .basic_ack(tag, BasicAckOptions { multiple: false })
+                .await
+                .expect("basic_ack");
+        }
+        HandleMessageResult::NackNoRequeue => {
+            channel
+                .basic_nack(
+                    tag,
+                    BasicNackOptions {
+                        multiple: false,
+                        requeue: false,
+                    },
+                )
+                .await
+                .expect("basic_ack");
+        }
+        HandleMessageResult::NackWithRequeue => {
+            channel
+                .basic_nack(
+                    tag,
+                    BasicNackOptions {
+                        multiple: false,
+                        requeue: true,
+                    },
+                )
+                .await
+                .expect("basic_ack");
+        }
+    }
 }

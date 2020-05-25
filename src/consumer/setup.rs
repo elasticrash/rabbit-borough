@@ -8,6 +8,7 @@ use lapin::Error;
 use lapin::ExchangeKind;
 use lapin::Queue;
 
+#[derive(Clone)]
 pub struct SetupModel {
     pub channel: Channel,
     pub queue: Result<Queue, Error>,
