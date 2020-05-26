@@ -28,6 +28,7 @@ fn main() {
         queue: &config.binding.queue,
         exchange: &config.binding.exchange,
         routing_key: &config.binding.routing_key,
+        connection_retry: &6
     };
 
     LocalPool::new().run_until(async {

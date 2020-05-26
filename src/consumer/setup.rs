@@ -17,7 +17,7 @@ pub struct SetupModel {
 }
 
 pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
-    let channel = create_channel(build_url(config.clone()).as_str()).await;
+    let channel = create_channel(build_url(config.clone()).as_str(), config.connection_retry).await;
     let queue = channel
         .queue_declare(
             config.clone().queue,
@@ -71,8 +71,8 @@ fn build_url(config: ConsumerConfiguration<'_>) -> String {
 }
 
 /// create a channel
-async fn create_channel<'a>(addr: &'a str) -> Channel {
-    let conn = connection_manager::get_connection(&addr, 0).await;
+async fn create_channel<'a>(addr: &'a str, total_retries: &'a u64) -> Channel {
+    let conn = connection_manager::get_connection(&addr, 0, total_retries).await;
     println!(
         "[{}] connection state: {:?}",
         line!(),

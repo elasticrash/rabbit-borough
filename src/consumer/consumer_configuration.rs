@@ -10,4 +10,5 @@ pub struct ConsumerConfiguration<'a> {
     pub queue: &'a str,
     pub exchange: &'a str,
     pub routing_key: &'a str,
+    pub connection_retry: &'a u64,
 }
