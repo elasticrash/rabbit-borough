@@ -6,7 +6,8 @@
         "heartbeat": 10,
         "connection_timeout": 1000,
         "username": "secure",
-        "password": "secure"
+        "password": "secure",
+        "retry": 6
     },
     "binding": {
         "queue": "myQueue",

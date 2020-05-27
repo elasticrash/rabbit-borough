@@ -15,6 +15,7 @@ pub struct ConnectionProperties {
     pub password: String,
     pub heartbeat: i32,
     pub connection_timeout: i32,
+    pub retry: u64,
 }
 
 #[derive(Deserialize, Clone, Debug)]
