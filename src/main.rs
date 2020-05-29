@@ -54,10 +54,10 @@ fn main() {
 
         for delivery in consumer {
             println!("received message: {:?}", delivery);
-            if let Ok(delivery) = delivery {
+            if let Ok((channel, delivery)) = delivery {
                 let tag = delivery.delivery_tag.clone();
                 let outcome = handler(delivery);
-                action_result(outcome, &model.channel, tag).await;
+                action_result(outcome, &channel, tag).await;
             }
         }
     })

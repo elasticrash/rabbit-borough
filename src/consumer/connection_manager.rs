@@ -10,7 +10,7 @@ pub fn get_connection<'a>(
 ) -> BoxFuture<'a, Connection> {
     return Box::pin(
         async move {
-            let con_promise = Connection::connect(&addr, ConnectionProperties::default());
+            let con_promise = Connection::connect(&addr, ConnectionProperties::default().with_default_executor(8));
             let conn_res = con_promise.await;
             let connection = match conn_res {
                 Ok(c) => c,
