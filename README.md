@@ -7,6 +7,7 @@ Goal: To fit my needs and hopefully, someone else's
 29/05/2020
 
 * updated to Lapin v1.0.0
+* added default implementation for JSONConfiguration properties
 
 26/05/2020
 

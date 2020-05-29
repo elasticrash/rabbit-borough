@@ -14,6 +14,8 @@ fn main() {
         Err(why) => panic!("Error {:?}", why),
     };
 
+    println!("{:?}", config);
+
     let setup_config = ConsumerConfiguration {
         host: &config.connection.host,
         port: &config.connection.port,
