@@ -3,6 +3,7 @@ use lapin::options::BasicNackOptions;
 use lapin::options::BasicAckOptions;
 use lapin::types::LongLongUInt;
 
+#[allow(dead_code)]
 pub enum HandleMessageResult {
     Ack,
     NackNoRequeue,

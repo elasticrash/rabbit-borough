@@ -4,19 +4,10 @@ Goal: To fit my needs and hopefully, someone else's
 
 (work in progress) my plan is to add a bit of code at least 2-4 times per week (until I reach a satisfying point)
 
-29/05/2020
+HOW TO USE
 
-* updated to Lapin v1.0.0
-* added default implementation for JSONConfiguration properties
+* first of all its not a library yet, so the how to use the code is basically whatever is on main.rs
 
-26/05/2020
+The whole idea is basically to be able to create a consumer project with minimal effort, by bypassing templating, configuration and complicated resiliency logic. 
 
-* connection retry config
-
-25/05/2020
-
-* added ConsumerConfiguration, ConnectionProperties and BindingProperties
-
-24/05/2020
-
-* everything is hardcoded !! ;)
+The only thing, that will eventually needed is to write the message handler logic 

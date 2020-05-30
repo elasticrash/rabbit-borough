@@ -1,6 +1,6 @@
 [package]
 name = "rabbit-rs"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["stefanos.kouroupis <stefanos.kouroupis@cloudcall.com>"]
 edition = "2018"
 

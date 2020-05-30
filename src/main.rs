@@ -1,20 +1,19 @@
 mod configuration;
 mod consumer;
+
+use crate::consumer::consumer::consume;
+use crate::consumer::consumer::create_consumer;
 use crate::consumer::consumer_configuration::ConsumerConfiguration;
-use crate::consumer::handler_message_result::{action_result, HandleMessageResult};
+use crate::consumer::handler_message_result::HandleMessageResult;
 use configuration::config_model::JSONConfiguration;
 use futures_executor::LocalPool;
 use lapin::message::Delivery;
-use lapin::options::BasicConsumeOptions;
-use lapin::types::FieldTable;
 
 fn main() {
     let config: JSONConfiguration = match configuration::reader::read("./config.json") {
         Ok(data) => data,
         Err(why) => panic!("Error {:?}", why),
     };
-
-    println!("{:?}", config);
 
     let setup_config = ConsumerConfiguration {
         host: &config.connection.host,
@@ -42,31 +41,14 @@ fn main() {
         println!("[{}] queue status: {:?}", line!(), model.queue);
         println!("[{}] exchange status: {:?}", line!(), model.exchange);
         println!("[{}] bind status: {:?}", line!(), model.binding);
-
-        let consumer = model
-            .channel
-            .basic_consume(
-                &config.binding.queue,
-                "",
-                BasicConsumeOptions::default(),
-                FieldTable::default(),
-            )
-            .await
-            .expect("basic_consume");
-
-        for delivery in consumer {
-            println!("received message: {:?}", delivery);
-            if let Ok((channel, delivery)) = delivery {
-                let tag = delivery.delivery_tag.clone();
-                let outcome = handler(delivery);
-                action_result(outcome, &channel, tag).await;
-            }
-        }
+        let consumer = create_consumer(&config.binding.queue, &model.channel).await;
+        consume(consumer, &handler).await;
     })
 }
 
 /// function to handle the message
-fn handler(_delivery: Delivery) -> HandleMessageResult {
+fn handler(_delivery: &Delivery) -> HandleMessageResult {
     // CONSUMER LOGIC
+    println!("[{}] - {:?}", line!(), std::str::from_utf8(&_delivery.data));
     return HandleMessageResult::Ack;
 }
