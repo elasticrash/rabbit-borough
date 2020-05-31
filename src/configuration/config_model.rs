@@ -1,9 +1,11 @@
 use serde::Deserialize;
 
+#[serde(default)]
 #[derive(Deserialize, Clone, Debug)]
 pub struct JSONConfiguration {
     pub connection: ConnectionProperties,
     pub binding: BindingProperties,
+    pub declare: DeclareProperties,
 }
 
 #[serde(default)]
@@ -27,6 +29,24 @@ pub struct BindingProperties {
     pub routing_key: String,
 }
 
+#[serde(default)]
+#[derive(Deserialize, Clone, Debug)]
+pub struct DeclareProperties {
+    pub queue: bool,
+    pub exchange: bool,
+    pub binding: bool,
+}
+
+impl Default for JSONConfiguration {
+    fn default() -> JSONConfiguration {
+        JSONConfiguration {
+            connection: ConnectionProperties::default(),
+            binding: BindingProperties::default(),
+            declare: DeclareProperties::default(),
+        }
+    }
+}
+
 impl Default for ConnectionProperties {
     fn default() -> ConnectionProperties {
         ConnectionProperties {
@@ -48,6 +68,16 @@ impl Default for BindingProperties {
             queue: "myQueue".to_string(),
             exchange: "myExchange".to_string(),
             routing_key: "myKey".to_string(),
+        }
+    }
+}
+
+impl Default for DeclareProperties {
+    fn default() -> DeclareProperties {
+        DeclareProperties {
+            queue: true,
+            exchange: true,
+            binding: true,
         }
     }
 }

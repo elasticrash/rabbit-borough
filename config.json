@@ -13,5 +13,10 @@
         "queue": "myQueue",
         "exchange": "myExchange",
         "routing_key": "myKey"
+    },
+    "declare": {
+        "queue": true,
+        "exchange": true,
+        "binding": true
     }
 }

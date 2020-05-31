@@ -1,5 +1,6 @@
 use crate::configuration::config_model::BindingProperties;
 use crate::configuration::config_model::ConnectionProperties;
+use crate::configuration::config_model::DeclareProperties;
 use crate::consumer::connection_manager;
 use lapin::options::ExchangeDeclareOptions;
 use lapin::options::*;
@@ -12,43 +13,66 @@ use lapin::Queue;
 #[derive(Clone)]
 pub struct SetupModel {
     pub channel: Channel,
-    pub queue: Result<Queue, Error>,
-    pub exchange: Result<(), Error>,
-    pub binding: Result<(), Error>,
+    pub queue: Option<Result<Queue, Error>>,
+    pub exchange: Option<Result<(), Error>>,
+    pub binding: Option<Result<(), Error>>,
 }
 
 pub async fn setup_consumer(
     connection: ConnectionProperties,
-    binding: BindingProperties,
+    bind: BindingProperties,
+    declare: DeclareProperties,
 ) -> SetupModel {
     let channel = create_channel(build_url(connection.clone()).as_str(), connection.retry).await;
-    let queue = channel
-        .queue_declare(
-            &binding.queue,
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
-        )
-        .await;
-    let exchange = create_exchange(
-        &binding.exchange,
-        channel.clone(),
-        ExchangeDeclareOptions {
-            passive: false,
-            durable: true,
-            auto_delete: true,
-            internal: false,
-            nowait: false,
-        },
-    )
-    .await;
+    let mut queue = None;
+    if declare.queue {
+        queue = Some(
+            channel
+                .queue_declare(
+                    &bind.queue,
+                    QueueDeclareOptions::default(),
+                    FieldTable::default(),
+                )
+                .await,
+        );
+        println!("[{}] queue setup completed: {:?}", line!(), queue);
+    }
+    let mut exchange = None;
+    if declare.exchange {
+        exchange = Some(
+            create_exchange(
+                &bind.exchange,
+                channel.clone(),
+                ExchangeDeclareOptions {
+                    passive: false,
+                    durable: true,
+                    auto_delete: true,
+                    internal: false,
+                    nowait: false,
+                },
+            )
+            .await,
+        );
+        println!("[{}] exchange setup completed: {:?}", line!(), exchange);
+    }
 
-    let binding = create_exchange_queue_binding(
-        channel.clone(),
-        &binding.queue,
-        &binding.exchange,
-        &binding.routing_key,
-    )
-    .await;
+    let mut binding = None;
+    if declare.binding {
+        binding = Some(
+            create_exchange_queue_binding(
+                channel.clone(),
+                &bind.queue,
+                &bind.exchange,
+                &bind.routing_key,
+            )
+            .await,
+        );
+        println!(
+            "[{}] queue/exchange binding completed: {:?}",
+            line!(),
+            binding
+        );
+    }
 
     return SetupModel {
         channel,

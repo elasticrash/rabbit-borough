@@ -15,7 +15,12 @@ fn main() {
     };
 
     LocalPool::new().run_until(async {
-        let model = consumer::setup::setup_consumer(config.connection.clone(), config.binding.clone()).await;
+        let model = consumer::setup::setup_consumer(
+            config.connection.clone(),
+            config.binding.clone(),
+            config.declare.clone(),
+        )
+        .await;
 
         println!(
             "[{}] channel status: {:?}",
@@ -23,9 +28,6 @@ fn main() {
             model.channel.status().state()
         );
 
-        println!("[{}] queue status: {:?}", line!(), model.queue);
-        println!("[{}] exchange status: {:?}", line!(), model.exchange);
-        println!("[{}] bind status: {:?}", line!(), model.binding);
         let consumer = create_consumer(&config.binding.queue, &model.channel).await;
         consume(consumer, &handler).await;
     })
