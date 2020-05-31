@@ -1,5 +1,6 @@
+use crate::configuration::config_model::BindingProperties;
+use crate::configuration::config_model::ConnectionProperties;
 use crate::consumer::connection_manager;
-use crate::consumer::consumer_configuration::ConsumerConfiguration;
 use lapin::options::ExchangeDeclareOptions;
 use lapin::options::*;
 use lapin::types::FieldTable;
@@ -16,17 +17,20 @@ pub struct SetupModel {
     pub binding: Result<(), Error>,
 }
 
-pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
-    let channel = create_channel(build_url(config.clone()).as_str(), config.connection_retry).await;
+pub async fn setup_consumer(
+    connection: ConnectionProperties,
+    binding: BindingProperties,
+) -> SetupModel {
+    let channel = create_channel(build_url(connection.clone()).as_str(), connection.retry).await;
     let queue = channel
         .queue_declare(
-            config.clone().queue,
+            &binding.queue,
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
         .await;
     let exchange = create_exchange(
-        config.clone().exchange,
+        &binding.exchange,
         channel.clone(),
         ExchangeDeclareOptions {
             passive: false,
@@ -40,9 +44,9 @@ pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
 
     let binding = create_exchange_queue_binding(
         channel.clone(),
-        config.clone().queue,
-        config.clone().exchange,
-        config.clone().routing_key,
+        &binding.queue,
+        &binding.exchange,
+        &binding.routing_key,
     )
     .await;
 
@@ -55,7 +59,7 @@ pub async fn setup_consumer(config: ConsumerConfiguration<'_>) -> SetupModel {
 }
 
 /// build URL
-fn build_url(config: ConsumerConfiguration<'_>) -> String {
+fn build_url(config: ConnectionProperties) -> String {
     let url = format!(
         "amqp://{}:{}@{}:{}/{}?hearthbeat={}&connection_timeout={}",
         config.username,
@@ -71,7 +75,7 @@ fn build_url(config: ConsumerConfiguration<'_>) -> String {
 }
 
 /// create a channel
-async fn create_channel<'a>(addr: &'a str, total_retries: &'a u64) -> Channel {
+async fn create_channel<'a>(addr: &'a str, total_retries: u64) -> Channel {
     let conn = connection_manager::get_connection(&addr, 0, total_retries).await;
     println!(
         "[{}] connection state: {:?}",

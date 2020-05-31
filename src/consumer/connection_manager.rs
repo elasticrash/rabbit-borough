@@ -6,7 +6,7 @@ use std::{thread, time};
 pub fn get_connection<'a>(
     addr: &'a str,
     retry: u64,
-    total_retries: &'a u64,
+    total_retries: u64,
 ) -> BoxFuture<'a, Connection> {
     return Box::pin(
         async move {
@@ -16,7 +16,7 @@ pub fn get_connection<'a>(
                 Ok(c) => c,
                 Err(why) => {
                     println!("{}", why);
-                    if retry > *total_retries {
+                    if retry > total_retries {
                         panic!("maximum retries reached");
                     }
                     let hibernate = time::Duration::from_millis(retry * 1000);
