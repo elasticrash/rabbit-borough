@@ -1,7 +1,6 @@
 use crate::configuration::config_model::JSONConfiguration;
 use crate::consumer::handler_message_result::action_result;
 use crate::consumer::handler_message_result::HandleMessageResult;
-use crate::consumer::setup::get_channel;
 use crate::consumer::setup::setup_consumer;
 use lapin::message::Delivery;
 use lapin::options::BasicConsumeOptions;
