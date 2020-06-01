@@ -2,7 +2,6 @@ mod configuration;
 mod consumer;
 
 use crate::consumer::consumer::consume;
-use crate::consumer::consumer::create_consumer;
 use crate::consumer::handler_message_result::HandleMessageResult;
 use configuration::config_model::JSONConfiguration;
 use futures_executor::LocalPool;
@@ -15,21 +14,7 @@ fn main() {
     };
 
     LocalPool::new().run_until(async {
-        let model = consumer::setup::setup_consumer(
-            config.connection.clone(),
-            config.binding.clone(),
-            config.declare.clone(),
-        )
-        .await;
-
-        println!(
-            "[{}] channel status: {:?}",
-            line!(),
-            model.channel.status().state()
-        );
-
-        let consumer = create_consumer(&config.binding.queue, &model.channel).await;
-        consume(consumer, &handler).await;
+        consume(&config, &handler).await;
     })
 }
 

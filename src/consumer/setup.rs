@@ -23,7 +23,7 @@ pub async fn setup_consumer(
     bind: BindingProperties,
     declare: DeclareProperties,
 ) -> SetupModel {
-    let channel = create_channel(build_url(connection.clone()).as_str(), connection.retry).await;
+    let channel = get_channel(connection).await;
     let mut queue = None;
     if declare.queue {
         queue = Some(
@@ -80,6 +80,10 @@ pub async fn setup_consumer(
         exchange,
         binding,
     };
+}
+
+pub async fn get_channel(connection: ConnectionProperties) -> Channel {
+    return create_channel(build_url(connection.clone()).as_str(), connection.retry).await;
 }
 
 /// build URL

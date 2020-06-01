@@ -7,7 +7,7 @@
         "connection_timeout": 1000,
         "username": "secure",
         "password": "secure",
-        "retry": 6
+        "retry": 4
     },
     "binding": {
         "queue": "myQueue",
