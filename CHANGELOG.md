@@ -1,5 +1,8 @@
+
 ### 0.1.2
-Added Connection resiliency. If the RabbitMq dies, it will start retrying to connect until it exhausts all retries
+
+* Removing println! and replacing them with proper error handling and error propagation
+* Added Connection resiliency. If the RabbitMq dies, it will start retrying to connect until it exhausts all retries
 
 ### 0.1.1
 

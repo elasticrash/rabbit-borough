@@ -2,6 +2,7 @@ use crate::configuration::config_model::BindingProperties;
 use crate::configuration::config_model::ConnectionProperties;
 use crate::configuration::config_model::DeclareProperties;
 use crate::consumer::connection_manager;
+use crate::consumer::connection_manager::GetConnectionError;
 use lapin::options::ExchangeDeclareOptions;
 use lapin::options::*;
 use lapin::types::FieldTable;
@@ -23,7 +24,9 @@ pub async fn setup_consumer(
     bind: BindingProperties,
     declare: DeclareProperties,
 ) -> SetupModel {
-    let channel = get_channel(connection).await;
+    let channel = create_channel(build_url(connection.clone()).as_str(), connection.retry)
+        .await
+        .expect("channel to be created");
     let mut queue = None;
     if declare.queue {
         queue = Some(
@@ -82,10 +85,6 @@ pub async fn setup_consumer(
     };
 }
 
-pub async fn get_channel(connection: ConnectionProperties) -> Channel {
-    return create_channel(build_url(connection.clone()).as_str(), connection.retry).await;
-}
-
 /// build URL
 fn build_url(config: ConnectionProperties) -> String {
     let url = format!(
@@ -103,16 +102,14 @@ fn build_url(config: ConnectionProperties) -> String {
 }
 
 /// create a channel
-async fn create_channel<'a>(addr: &'a str, total_retries: u64) -> Channel {
-    let conn = connection_manager::get_connection(&addr, 0, total_retries).await;
-    println!(
-        "[{}] connection state: {:?}",
-        line!(),
-        conn.status().state()
-    );
+async fn create_channel<'a>(
+    addr: &'a str,
+    total_retries: u64,
+) -> Result<Channel, GetConnectionError> {
+    let conn = connection_manager::get_connection(&addr, 0, total_retries).await?;
 
     return match conn.create_channel().await {
-        Ok(ch) => ch,
+        Ok(ch) => Ok(ch),
         Err(why) => panic!("{}", why),
     };
 }
