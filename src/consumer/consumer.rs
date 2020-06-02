@@ -32,12 +32,13 @@ pub async fn consume(
             config.declare.clone(),
         )
         .await;
-        println!(
-            "[{}] channel status: {:?}",
-            line!(),
-            model.channel.status().state()
-        );
+
+        println!("[{}] - {:?}", line!(), model.channel.status().state());
+
         let consumer = create_consumer(&config.binding.queue, &model.channel).await;
+
+        println!("[{}] - {:?}", line!(), consumer.tag());
+
         for message in consumer {
             match message {
                 Ok((channel, delivery)) => {
