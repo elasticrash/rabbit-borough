@@ -38,7 +38,6 @@ pub async fn setup_consumer(
                 )
                 .await,
         );
-        println!("[{}] queue setup completed: {:?}", line!(), queue);
     }
     let mut exchange = None;
     if declare.exchange {
@@ -56,7 +55,6 @@ pub async fn setup_consumer(
             )
             .await,
         );
-        println!("[{}] exchange setup completed: {:?}", line!(), exchange);
     }
 
     let mut binding = None;
@@ -69,11 +67,6 @@ pub async fn setup_consumer(
                 &bind.routing_key,
             )
             .await,
-        );
-        println!(
-            "[{}] queue/exchange binding completed: {:?}",
-            line!(),
-            binding
         );
     }
 

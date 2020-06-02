@@ -1,4 +1,5 @@
-# A rabbit MQ abstraction build upon lapin
+# Rabbit-Borough
+## A rabbit MQ abstraction build upon lapin
 
 Goal: To fit my needs and hopefully, someone else's
 

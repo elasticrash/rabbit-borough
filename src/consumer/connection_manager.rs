@@ -31,6 +31,7 @@ pub fn get_connection<'a>(
             let connection = match conn_res {
                 Ok(c) => Ok(c),
                 Err(why) => {
+                    println!("[{}] - {:?}", line!(), why);
                     if retry > total_retries {
                         GetConnectionError {
                             why: ConnectionState::MaximumConnectionRetriesReached,

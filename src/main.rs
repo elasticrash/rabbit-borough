@@ -8,10 +8,8 @@ use futures_executor::LocalPool;
 use lapin::message::Delivery;
 
 fn main() {
-    let config: JSONConfiguration = match configuration::reader::read("./config.json") {
-        Ok(data) => data,
-        Err(why) => panic!("Error {:?}", why),
-    };
+    let config: JSONConfiguration = configuration::reader::read("./config.json").unwrap();
+    println!("[{}] - Configuration read", line!(),);
 
     LocalPool::new().run_until(async {
         consume(&config, &handler).await;
