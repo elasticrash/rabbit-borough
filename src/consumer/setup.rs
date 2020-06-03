@@ -24,7 +24,7 @@ pub struct SetupModel {
 ///  * Declares the Queue
 ///  * Declares the Exchange
 ///  * Declares the Binding between the Exchange and the Queue
-/// 
+///
 pub async fn setup_consumer(
     connection: ConnectionProperties,
     bind: BindingProperties,
@@ -84,7 +84,7 @@ pub async fn setup_consumer(
     };
 }
 
-/// # builds URL 
+/// # builds URL
 /// although heartbeat and connection_timeout are optional
 /// parameters, they are really useful and allow you to fail
 /// easier and more precisely. So they are used by default.
@@ -155,4 +155,19 @@ async fn create_exchange_queue_binding(
         .wait();
 
     return bind;
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::configuration::config_model::*;
+    use crate::consumer::setup::*;
+
+    #[test]
+    fn amqp_url_generated_succesfully() {
+        let url = build_url(ConnectionProperties::default());
+        assert_eq!(
+            "amqp://guest:guest@127.0.0.1:5672//?hearthbeat=10&connection_timeout=1000",
+            url
+        );
+    }
 }

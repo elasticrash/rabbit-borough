@@ -16,10 +16,25 @@ pub fn read(filename: &str) -> serde_json::Result<JSONConfiguration> {
         Ok(mut file) => {
             file.read_to_string(&mut buffer).unwrap();
             config = serde_json::from_str(&buffer);
-            println!("[{}] - Reading {:?}", line!(), Path::new(filename).file_name());
+            println!(
+                "[{}] - Reading {:?}",
+                line!(),
+                Path::new(filename).file_name()
+            );
         }
         Err(_why) => {}
     };
 
     return config;
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::configuration::reader::*;
+
+    #[test]
+    fn get_default_config_if_file_does_not_exist() {
+        assert_eq!(read(&"random").unwrap(), JSONConfiguration::default());
+    }
 }

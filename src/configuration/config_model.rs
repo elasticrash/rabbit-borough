@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct JSONConfiguration {
     pub connection: ConnectionProperties,
     pub binding: BindingProperties,
@@ -9,7 +9,7 @@ pub struct JSONConfiguration {
 }
 
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct ConnectionProperties {
     pub host: String,
     pub port: i32,
@@ -22,7 +22,7 @@ pub struct ConnectionProperties {
 }
 
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct BindingProperties {
     pub queue: String,
     pub exchange: String,
@@ -30,7 +30,7 @@ pub struct BindingProperties {
 }
 
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct DeclareProperties {
     pub queue: bool,
     pub exchange: bool,
