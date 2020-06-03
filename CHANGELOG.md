@@ -1,6 +1,8 @@
 
 ### 0.1.2
 
+* Added unit tests
+* Converted the project structure to a lib
 * If the configuration file cannot be read, use the default values
 * Removing some logs and replacing them with proper error handling and error propagation
 * Added Connection resiliency. If the RabbitMq dies, it will start retrying to connect until it exhausts all retries

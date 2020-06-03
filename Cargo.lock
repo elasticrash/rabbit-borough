@@ -749,7 +749,7 @@ dependencies = [
 
 [[package]]
 name = "rabbit_borough"
-version = "0.1.2"
+version = "0.1.2-alpha"
 dependencies = [
  "futures",
  "futures-executor",
