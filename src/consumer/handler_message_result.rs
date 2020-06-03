@@ -10,7 +10,9 @@ pub enum HandleMessageResult {
     NackWithRequeue,
 }
 
-/// output of that handler
+/// Consumer Acknowledgements
+/// Sends Positive or Negative Acknowledgement
+/// * Requeues if needed
 pub async fn action_result(result: HandleMessageResult, channel: &Channel, tag: LongLongUInt) {
     match result {
         HandleMessageResult::Ack => {

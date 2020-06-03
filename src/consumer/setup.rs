@@ -103,7 +103,9 @@ fn build_url(config: ConnectionProperties) -> String {
     return url;
 }
 
-/// # create a channel
+/// # Creates a channel
+/// * Gets a valid connection
+/// * Returns a channel
 async fn create_channel<'a>(
     addr: &'a str,
     total_retries: u64,
@@ -116,7 +118,8 @@ async fn create_channel<'a>(
     };
 }
 
-/// # create an exchange
+/// # Creates an exchange
+/// * Returns an exchange
 async fn create_exchange(
     exchange: &str,
     channel: Channel,
@@ -133,7 +136,8 @@ async fn create_exchange(
     return exchange;
 }
 
-/// # bind your exchange with a queue
+/// # Binds the exchange with a queue
+/// * Returns the binding
 async fn create_exchange_queue_binding(
     channel: Channel,
     queue: &str,

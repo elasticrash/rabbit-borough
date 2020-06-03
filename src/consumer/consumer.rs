@@ -8,6 +8,8 @@ use lapin::types::FieldTable;
 use lapin::Channel;
 use lapin::Consumer;
 
+/// # Create a consumer
+/// Returns consumer
 pub async fn create_consumer(queue_name: &str, channel: &Channel) -> Consumer {
     let consumer = channel
         .basic_consume(
@@ -21,6 +23,11 @@ pub async fn create_consumer(queue_name: &str, channel: &Channel) -> Consumer {
     return consumer;
 }
 
+/// This is the function that the consuming is happening
+/// There are two (infinite) loops here, a. one around the consumer, which
+/// while the connection is healthy keeps dequeuing messages 
+/// b. one that once the connection dies, restarts the whole process of getting a channel and 
+/// setting up the consumer
 pub async fn consume(
     config: &JSONConfiguration,
     handler: &dyn Fn(&Delivery) -> HandleMessageResult,

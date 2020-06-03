@@ -16,6 +16,7 @@ pub enum ConnectionState {
 }
 
 /// Returns a Connection, retries x times
+/// This is an async resursive function
 pub fn get_connection<'a>(
     addr: &'a str,
     retry: u64,
