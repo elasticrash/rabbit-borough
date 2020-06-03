@@ -19,6 +19,12 @@ pub struct SetupModel {
     pub binding: Option<Result<(), Error>>,
 }
 
+///  # Executes configuration defined in the configuration
+///  * Creates a channel
+///  * Declares the Queue
+///  * Declares the Exchange
+///  * Declares the Binding between the Exchange and the Queue
+/// 
 pub async fn setup_consumer(
     connection: ConnectionProperties,
     bind: BindingProperties,
@@ -78,7 +84,10 @@ pub async fn setup_consumer(
     };
 }
 
-/// build URL
+/// # builds URL 
+/// although heartbeat and connection_timeout are optional
+/// parameters, they are really useful and allow you to fail
+/// easier and more precisely. So they are used by default.
 fn build_url(config: ConnectionProperties) -> String {
     let url = format!(
         "amqp://{}:{}@{}:{}/{}?hearthbeat={}&connection_timeout={}",
@@ -94,7 +103,7 @@ fn build_url(config: ConnectionProperties) -> String {
     return url;
 }
 
-/// create a channel
+/// # create a channel
 async fn create_channel<'a>(
     addr: &'a str,
     total_retries: u64,
@@ -107,7 +116,7 @@ async fn create_channel<'a>(
     };
 }
 
-/// create an exchange
+/// # create an exchange
 async fn create_exchange(
     exchange: &str,
     channel: Channel,
@@ -124,7 +133,7 @@ async fn create_exchange(
     return exchange;
 }
 
-/// bind your exchange with a queue
+/// # bind your exchange with a queue
 async fn create_exchange_queue_binding(
     channel: Channel,
     queue: &str,
