@@ -748,7 +748,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rabbit-borough"
+name = "rabbit_borough"
 version = "0.1.2"
 dependencies = [
  "futures",

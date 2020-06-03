@@ -1,11 +1,11 @@
-mod configuration;
-mod consumer;
+extern crate rabbit_borough;
 
-use crate::consumer::consumer::consume;
-use crate::consumer::handler_message_result::HandleMessageResult;
-use configuration::config_model::JSONConfiguration;
 use futures_executor::LocalPool;
 use lapin::message::Delivery;
+use rabbit_borough::configuration;
+use rabbit_borough::configuration::config_model::JSONConfiguration;
+use rabbit_borough::consumer::consumer::consume;
+use rabbit_borough::consumer::handler_message_result::HandleMessageResult;
 
 fn main() {
     let config: JSONConfiguration = configuration::reader::read("./config.json").unwrap();
