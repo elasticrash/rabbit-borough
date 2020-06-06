@@ -1,10 +1,10 @@
 # Rabbit-Borough
 
-## A rabbit MQ abstraction build upon [Lapin](https://crates.io/crates/lapin/1.0.2)
+A rabbit MQ abstraction build upon [Lapin](https://crates.io/crates/lapin/1.0.2)
 
 ## Example
 
-``` Rust
+```rust
 fn main() {
     let config: JSONConfiguration = configuration::reader::read("./config.json").unwrap();
     println!("[{}] - Configuration read", line!(),);
