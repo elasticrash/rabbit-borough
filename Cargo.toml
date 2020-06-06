@@ -5,6 +5,7 @@ authors = ["stefanos.kouroupis <manekato@gmail.com>"]
 edition = "2018"
 description = "Create a RabbitMQ consumer project with minimal effort, by bypassing templating, configuration and complicated resiliency logic"
 readme = "CARGO.md"
+documentation = "https://docs.rs/rabbit_borough"
 repository = "https://github.com/elasticrash/rabbit-borough"
 license = "MIT"
 keywords = ["rabbitmq", "amqp"]
