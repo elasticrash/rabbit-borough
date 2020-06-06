@@ -8,7 +8,6 @@ pub struct GetConnectionError {
     pub last_reason: lapin::Error,
 }
 
-#[allow(dead_code)]
 #[derive(Debug)]
 pub enum ConnectionState {
     MaximumConnectionRetriesReached,

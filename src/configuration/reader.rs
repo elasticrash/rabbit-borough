@@ -5,7 +5,7 @@ use std::io::Read;
 use std::path::Path;
 
 /**
- * ## Read configuration from config.json
+ * ## Reads configuration from provided file
  * If file does not exist or we cannot read the content of the file,
  * we use the default values
  */

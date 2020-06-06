@@ -1,5 +1,6 @@
 use serde::Deserialize;
 
+/// Top level configuration class
 #[serde(default)]
 #[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct JSONConfiguration {
@@ -8,6 +9,7 @@ pub struct JSONConfiguration {
     pub declare: DeclareProperties,
 }
 
+/// All the properties required for creating a connection
 #[serde(default)]
 #[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct ConnectionProperties {
@@ -21,6 +23,7 @@ pub struct ConnectionProperties {
     pub retry: u64,
 }
 
+/// Configuration for binding an Queue to an Exchange
 #[serde(default)]
 #[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct BindingProperties {
@@ -29,6 +32,7 @@ pub struct BindingProperties {
     pub routing_key: String,
 }
 
+/// Configuration on whether some setup should be deemed unnecessary
 #[serde(default)]
 #[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct DeclareProperties {

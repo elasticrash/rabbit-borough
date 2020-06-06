@@ -5,7 +5,7 @@ use lapin::message::Delivery;
 use rabbit_borough::configuration;
 use rabbit_borough::configuration::config_model::JSONConfiguration;
 use rabbit_borough::consumer::consumer::consume;
-use rabbit_borough::consumer::handler_message_result::HandleMessageResult;
+use rabbit_borough::consumer::handle_message_result::HandleMessageResult;
 
 fn main() {
     let config: JSONConfiguration = configuration::reader::read("./config.json").unwrap();

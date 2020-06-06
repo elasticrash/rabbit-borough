@@ -1,4 +1,8 @@
+/// Manages connections
 pub mod connection_manager;
+/// Sets up a consumer
 pub mod setup;
-pub mod handler_message_result;
+/// Handles the Acknowledge type of a message
+pub mod handle_message_result;
+/// Sets up and provides a consumer
 pub mod consumer;
