@@ -12,7 +12,12 @@
     "binding": {
         "queue": "myQueue",
         "exchange": "myExchange",
-        "routing_key": "myKey"
+        "routing_key": "myKey",
+        "exchange_declaration_options": {
+            "passive": false,
+            "durable": true,
+            "auto_delete": false
+        }
     },
     "declare": {
         "queue": true,

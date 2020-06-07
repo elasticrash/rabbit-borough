@@ -52,9 +52,9 @@ pub async fn setup_consumer(
                 &bind.exchange,
                 channel.clone(),
                 ExchangeDeclareOptions {
-                    passive: false,
-                    durable: true,
-                    auto_delete: true,
+                    passive: bind.exchange_declaration_options.passive,
+                    durable: bind.exchange_declaration_options.durable,
+                    auto_delete: bind.exchange_declaration_options.auto_delete,
                     internal: false,
                     nowait: false,
                 },

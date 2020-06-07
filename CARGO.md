@@ -21,6 +21,45 @@ fn handler(_delivery: &Delivery) -> HandleMessageResult {
 }
 ```
 
+## JSONConfiguration configuration example
+
+
+The entire configuration supports default implementations. So if the default assumptions are right for you don't need to provide the entire config, only the parts you are interested in.
+
+This is a full example 
+```json
+{
+    "connection": {
+        "host": "127.0.0.1",
+        "port": 5672,
+        "vhost": "/",
+        "heartbeat": 10,
+        "connection_timeout": 1000,
+        "username": "secure",
+        "password": "secure",
+        "retry": 4
+    },
+    "binding": {
+        "queue": "myQueue",
+        "exchange": "myExchange",
+        "routing_key": "myKey",
+        "exchange_declaration_options": {
+            "passive": false,
+            "durable": true,
+            "auto_delete": false
+        }
+    },
+    "declare": {
+        "queue": true,
+        "exchange": true,
+        "binding": true
+    }
+}
+```
+
+
+
+
 ## Idea
 
 The whole idea is basically to be able to create a consumer project with minimal effort, by bypassing templating, configuration and complicated resiliency logic. 

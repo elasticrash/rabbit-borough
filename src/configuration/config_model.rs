@@ -30,6 +30,7 @@ pub struct BindingProperties {
     pub queue: String,
     pub exchange: String,
     pub routing_key: String,
+    pub exchange_declaration_options: ExchangeOptions,
 }
 
 /// Configuration on whether some setup should be deemed unnecessary
@@ -39,6 +40,24 @@ pub struct DeclareProperties {
     pub queue: bool,
     pub exchange: bool,
     pub binding: bool,
+}
+
+#[serde(default)]
+#[derive(Deserialize, Copy, Clone, Debug, PartialEq)]
+pub struct ExchangeOptions {
+    pub passive: bool,
+    pub durable: bool,
+    pub auto_delete: bool,
+}
+
+impl Default for ExchangeOptions {
+    fn default() -> ExchangeOptions {
+        ExchangeOptions {
+            passive: false,
+            durable: true,
+            auto_delete: true,
+        }
+    }
 }
 
 impl Default for JSONConfiguration {
@@ -72,6 +91,7 @@ impl Default for BindingProperties {
             queue: "myQueue".to_string(),
             exchange: "myExchange".to_string(),
             routing_key: "myKey".to_string(),
+            exchange_declaration_options: ExchangeOptions::default()
         }
     }
 }

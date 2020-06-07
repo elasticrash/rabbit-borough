@@ -1,3 +1,7 @@
+### 0.1.3-beta.2
+
+* Added ExchangeOptions in JSONConfiguration
+
 ### 0.1.3-beta
 
 #### Breaking changes
