@@ -1,6 +1,7 @@
 ### 0.1.3-beta.2
 
 * Added ExchangeOptions in JSONConfiguration
+* Improved README and CRATE documents
 
 ### 0.1.3-beta
 
