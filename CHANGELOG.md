@@ -1,3 +1,8 @@
+### 0.1.3-beta.3
+
+* Added a publisher module and publisher example.
+* Create_channel and build_url are now publish and got moved on connection_manager
+
 ### 0.1.3-beta.2
 
 * Added ExchangeOptions in JSONConfiguration

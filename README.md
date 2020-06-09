@@ -64,6 +64,6 @@ This is a full example
 
 ## IDEA
 
-The whole idea is basically to be able to create a consumer project with minimal effort, by bypassing templating, configuration and complicated resiliency logic. 
+The whole idea is basically to be able to create a consumer or publisher project with minimal effort, by bypassing templating, configuration and complicated resiliency logic. 
 
 The only thing, that will eventually needed is to write the message handler logic 

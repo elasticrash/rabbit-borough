@@ -9,3 +9,5 @@ pub mod configuration;
 /// * Setting up a consumer (consumer)
 /// * Handling the outcome of a Message
 pub mod consumer;
+
+pub mod publisher;
