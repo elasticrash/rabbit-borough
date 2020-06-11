@@ -12,13 +12,15 @@ fn main() {
 
     LocalPool::new().run_until(async {
         loop {
-            publish(
+            let outcome = publish(
                 "test".to_string(),
                 &config.binding.exchange,
                 &config.binding.routing_key,
                 config.connection.clone(),
             )
             .await;
+
+            println!("[{}] - {:?}", line!(), outcome);
 
             let delay = time::Duration::from_millis(500);
             thread::sleep(delay);
