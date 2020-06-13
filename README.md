@@ -1,7 +1,5 @@
 # Rabbit-Borough
 ## A rabbit MQ abstraction build upon lapin
-
-## Status
 ![Rust](https://github.com/elasticrash/rabbit-borough/workflows/Rust/badge.svg)
 
 Goal: To fit my needs and hopefully, someone else's
