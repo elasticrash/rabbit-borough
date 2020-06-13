@@ -1,3 +1,5 @@
+### 0.1.3-beta.4
+
 ### 0.1.3-beta.3
 
 * Added a publisher module and publisher example.

@@ -1,6 +1,6 @@
 [package]
 name = "rabbit_borough"
-version = "0.1.3-beta.3"
+version = "0.1.3-beta.4"
 authors = ["stefanos.kouroupis <manekato@gmail.com>"]
 edition = "2018"
 description = "Create a RabbitMQ consumer project with minimal effort, by bypassing templating, configuration and complicated resiliency logic"
