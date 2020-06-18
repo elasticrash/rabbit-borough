@@ -14,7 +14,7 @@ fn main() {
     })
 }
 
-fn handler(_delivery: &Delivery) -> HandleMessageResult {
+fn handler(_delivery: &DeliveredMessage) -> HandleMessageResult {
     // In order to read the message you need to convert the _delivery.data from a u8 vec to a utf8 string :
     // std::str::from_utf8(&_delivery.data))
     return HandleMessageResult::Ack;

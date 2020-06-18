@@ -5,14 +5,15 @@ use lapin::{Connection, ConnectionProperties};
 use std::{thread, time};
 
 #[derive(Debug)]
-pub struct GetConnectionError {
-    pub why: ConnectionState,
-    pub last_reason: lapin::Error,
+pub struct GenericError<T> {
+    pub why: ErrorType,
+    pub last_reason: T,
 }
 
 #[derive(Debug)]
-pub enum ConnectionState {
+pub enum ErrorType {
     MaximumConnectionRetriesReached,
+    CannotCreateChannel,
     Unknown,
 }
 
@@ -22,7 +23,7 @@ pub fn get_connection<'a>(
     addr: &'a str,
     retry: u64,
     total_retries: u64,
-) -> BoxFuture<'a, Result<Connection, GetConnectionError>> {
+) -> BoxFuture<'a, Result<Connection, GenericError<lapin::Error>>> {
     return Box::pin(
         async move {
             let con_promise = Connection::connect(
@@ -35,8 +36,8 @@ pub fn get_connection<'a>(
                 Err(why) => {
                     println!("[{}] - {:?}", line!(), why);
                     if retry > total_retries {
-                        GetConnectionError {
-                            why: ConnectionState::MaximumConnectionRetriesReached,
+                        GenericError {
+                            why: ErrorType::MaximumConnectionRetriesReached,
                             last_reason: why,
                         };
                     }
@@ -77,12 +78,15 @@ pub fn build_url(config: LocalProperties) -> String {
 pub async fn create_channel<'a>(
     addr: &'a str,
     total_retries: u64,
-) -> Result<Channel, GetConnectionError> {
+) -> Result<Channel, GenericError<lapin::Error>> {
     let conn = get_connection(&addr, 0, total_retries).await?;
 
     return match conn.create_channel().await {
         Ok(ch) => Ok(ch),
-        Err(why) => panic!("{}", why),
+        Err(why) => Err(GenericError {
+            why: ErrorType::CannotCreateChannel,
+            last_reason: why,
+        }),
     };
 }
 

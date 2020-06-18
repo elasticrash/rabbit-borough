@@ -1,6 +1,8 @@
 ### 0.1.3-beta.4
 
 * Wrap lapin Delivery as DeliveredMessage so as not to need to include lapin as a direct dependency
+* Replaced GetConnectionError with GenericError<T>
+* Replaced ConnectionState with ErrorType
 
 ### 0.1.3-beta.3
 
