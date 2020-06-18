@@ -8,6 +8,8 @@ use lapin::types::FieldTable;
 use lapin::Channel;
 use lapin::Consumer;
 
+pub type DeliveredMessage = Delivery;
+
 /// # Create a consumer
 /// Returns consumer
 pub async fn create_consumer(queue_name: &str, channel: &Channel) -> Consumer {
