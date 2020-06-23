@@ -1,3 +1,7 @@
+### 0.1.3-beta.5
+
+* Added consume_with_option that allows to pass an Option of type T into the handler
+
 ### 0.1.3-beta.4
 
 * Wrap lapin Delivery as DeliveredMessage so as not to need to include lapin as a direct dependency
