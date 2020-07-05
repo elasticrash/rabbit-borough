@@ -1,6 +1,6 @@
 ### 0.1.4
 
-* Tested thorougly in one of my personal projects
+* Tested thoroughly in one of my personal projects
 * Added example on how to use postgres and r2d2 in a consumer project
 
 ### 0.1.3-beta.5
