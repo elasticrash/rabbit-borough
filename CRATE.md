@@ -1,6 +1,6 @@
 # Rabbit-Borough
 ![Rust](https://github.com/elasticrash/rabbit-borough/workflows/Rust/badge.svg)
-A rabbit MQ abstraction build upon [Lapin](https://crates.io/crates/lapin/1.0.2)
+A rabbit MQ abstraction build upon [Lapin](https://crates.io/crates/lapin)
 
 ## Consumer example
 
