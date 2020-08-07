@@ -83,8 +83,16 @@ This is a full example
 }
 ```
 
+## More examples
 
+For more examples go to the repository at [examples](https://github.com/elasticrash/rabbit-borough/tree/master/examples)
 
+Examples include
+* simple consumer
+* consumer using a postgres connection pool
+* consumer with options
+* simple publisher
+* publisher with message type
 
 ## Idea
 
