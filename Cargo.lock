@@ -11,9 +11,9 @@ dependencies = [
 
 [[package]]
 name = "amq-protocol"
-version = "6.0.0-rc11"
+version = "6.0.0-rc12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87ef73bc41e9b11abddb726674222ead7cc7ca213792c4e6975b32d336a91fcd"
+checksum = "3a582e9acd2b9c950e0199f362b50adc2dd50df19b80b6ff21e6f665f9ffec1a"
 dependencies = [
  "amq-protocol-tcp",
  "amq-protocol-types",
@@ -24,9 +24,9 @@ dependencies = [
 
 [[package]]
 name = "amq-protocol-tcp"
-version = "6.0.0-rc11"
+version = "6.0.0-rc12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd1d31f96067568d994879cc88dd76bee92dd87129dc6f11e22a0c0b29c5c32a"
+checksum = "08a78f63c0f5687fad9e568308a0e47dbf67284169989720041a1776da2a2a54"
 dependencies = [
  "amq-protocol-uri",
  "log",
@@ -35,9 +35,9 @@ dependencies = [
 
 [[package]]
 name = "amq-protocol-types"
-version = "6.0.0-rc11"
+version = "6.0.0-rc12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77086efe0607b5ac2da723d3af9a087a2d7ba305d0010ae200aa4f548c330e34"
+checksum = "79ba245d2b7aff08d8d282e599b464d39374562558978441ba79dbf2c4144c1f"
 dependencies = [
  "cookie-factory",
  "nom",
@@ -47,9 +47,9 @@ dependencies = [
 
 [[package]]
 name = "amq-protocol-uri"
-version = "6.0.0-rc11"
+version = "6.0.0-rc12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc4f4f1813c1dbc0c4f8f7bee2bc0a2cf32ff63d5de12bca46aff68a33a13668"
+checksum = "3d04a3088d68efdc84895ccf27af671d553807a713c1f33f0e2ee35c19ddc593"
 dependencies = [
  "percent-encoding",
  "url",
@@ -464,9 +464,9 @@ dependencies = [
 
 [[package]]
 name = "lapin"
-version = "1.1.2"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8cea80315b4bf8f362dd1866242e51889fd78e0ac8ed954f8c718553779ab28"
+checksum = "5863bac1b1506b36aac7d038fc9e35917d85cb978f9314b8eaacf3277a2a0f41"
 dependencies = [
  "amq-protocol",
  "async-task",
@@ -474,7 +474,7 @@ dependencies = [
  "futures-core",
  "log",
  "mio 0.7.0",
- "parking_lot 0.10.2",
+ "parking_lot 0.11.0",
  "pinky-swear",
 ]
 
@@ -967,8 +967,9 @@ dependencies = [
 
 [[package]]
 name = "rabbit_borough"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
+ "amq-protocol-types",
  "futures",
  "futures-executor",
  "lapin",
@@ -1245,9 +1246,9 @@ dependencies = [
 
 [[package]]
 name = "tcp-stream"
-version = "0.19.3"
+version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "309e72bf98be1edcc5568097aff1bee239837eb099d88111e9f509a175c0f27f"
+checksum = "2d147f992a9942eb288eb52f58ba1868eee976d4983f2013867fde3736c52d0c"
 dependencies = [
  "cfg-if",
  "mio 0.7.0",
