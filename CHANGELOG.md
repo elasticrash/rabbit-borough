@@ -1,3 +1,7 @@
+### 0.1.5
+
+* Added publish_with_type so as to be able to publish messages of a specific type
+
 ### 0.1.4
 
 * Tested thoroughly in one of my personal projects
