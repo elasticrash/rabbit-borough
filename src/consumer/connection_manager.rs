@@ -59,7 +59,7 @@ pub fn get_connection<'a>(
 /// easier and more precisely. So they are used by default.
 pub fn build_url(config: LocalProperties) -> String {
     let url = format!(
-        "amqp://{}:{}@{}:{}/{}?hearthbeat={}&connection_timeout={}",
+        "amqp://{}:{}@{}:{}/{}?heartbeat={}&connection_timeout={}",
         config.username,
         config.password,
         config.host,
@@ -99,7 +99,7 @@ mod tests {
     fn amqp_url_generated_succesfully() {
         let url = build_url(ConnectionProperties::default());
         assert_eq!(
-            "amqp://guest:guest@127.0.0.1:5672//?hearthbeat=10&connection_timeout=1000",
+            "amqp://guest:guest@127.0.0.1:5672//?heartbeat=10&connection_timeout=1000",
             url
         );
     }
