@@ -1,3 +1,7 @@
+### 0.1.6
+
+* Fixed typo on connection string
+
 ### 0.1.5
 
 * Added publish_with_type so as to be able to publish messages of a specific type
