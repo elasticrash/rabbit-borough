@@ -1,7 +1,8 @@
 use crate::configuration::config_model::ConnectionProperties as LocalProperties;
-use futures::future::{BoxFuture, FutureExt};
-use lapin::Channel;
+use futures_lite::Future;
+use lapin::{Channel, Error};
 use lapin::{Connection, ConnectionProperties};
+use std::pin::Pin;
 use std::{thread, time};
 
 #[derive(Debug)]
@@ -23,34 +24,29 @@ pub fn get_connection<'a>(
     addr: &'a str,
     retry: u64,
     total_retries: u64,
-) -> BoxFuture<'a, Result<Connection, GenericError<lapin::Error>>> {
-    return Box::pin(
-        async move {
-            let con_promise = Connection::connect(
-                &addr,
-                ConnectionProperties::default().with_default_executor(8),
-            );
-            let conn_res = con_promise.await;
-            let connection = match conn_res {
-                Ok(c) => Ok(c),
-                Err(why) => {
-                    println!("[{}] - {:?}", line!(), why);
-                    if retry > total_retries {
-                        GenericError {
-                            why: ErrorType::MaximumConnectionRetriesReached,
-                            last_reason: why,
-                        };
-                    }
-                    let hibernate = time::Duration::from_millis(retry * 1000);
-                    thread::sleep(hibernate);
-                    let c = get_connection(addr, retry + 1, total_retries);
-                    c.await
+) -> Pin<Box<dyn Future<Output = Result<Connection, GenericError<Error>>> + 'a>> {
+    Box::pin(async move {
+        let con_promise = Connection::connect(addr, ConnectionProperties::default());
+        let conn_res = con_promise.await;
+        let connection = match conn_res {
+            Ok(c) => Ok(c),
+            Err(why) => {
+                println!("[{}] - {:?}", line!(), why);
+                if retry > total_retries {
+                    Err(GenericError {
+                        why: ErrorType::MaximumConnectionRetriesReached,
+                        last_reason: why,
+                    })
+                    .unwrap()
                 }
-            };
-            connection
-        }
-        .boxed(),
-    );
+                let hibernate = time::Duration::from_millis(retry * 1000);
+                thread::sleep(hibernate);
+                let c = get_connection(addr, retry + 1, total_retries);
+                c.await
+            }
+        };
+        connection
+    })
 }
 
 /// # builds URL
@@ -58,7 +54,7 @@ pub fn get_connection<'a>(
 /// parameters, they are really useful and allow you to fail
 /// easier and more precisely. So they are used by default.
 pub fn build_url(config: LocalProperties) -> String {
-    let url = format!(
+    format!(
         "amqp://{}:{}@{}:{}/{}?heartbeat={}&connection_timeout={}",
         config.username,
         config.password,
@@ -67,27 +63,25 @@ pub fn build_url(config: LocalProperties) -> String {
         config.vhost,
         config.heartbeat,
         config.connection_timeout
-    );
-
-    return url;
+    )
 }
 
 /// # Creates a channel
 /// * Gets a valid connection
 /// * Returns a channel
-pub async fn create_channel<'a>(
-    addr: &'a str,
+pub async fn create_channel(
+    addr: &str,
     total_retries: u64,
 ) -> Result<Channel, GenericError<lapin::Error>> {
-    let conn = get_connection(&addr, 0, total_retries).await?;
+    let conn = get_connection(addr, 0, total_retries).await?;
 
-    return match conn.create_channel().await {
+    match conn.create_channel().await {
         Ok(ch) => Ok(ch),
         Err(why) => Err(GenericError {
             why: ErrorType::CannotCreateChannel,
             last_reason: why,
         }),
-    };
+    }
 }
 
 #[cfg(test)]

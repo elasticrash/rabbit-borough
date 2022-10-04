@@ -24,7 +24,7 @@ pub fn read(filename: &str) -> serde_json::Result<JSONConfiguration> {
         }
         Err(_why) => {}
     };
-    return config;
+    config
 }
 
 #[cfg(test)]

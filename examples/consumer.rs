@@ -1,10 +1,10 @@
 extern crate rabbit_borough;
 
-use futures_executor::LocalPool;
+use futures::executor::LocalPool;
 use rabbit_borough::configuration;
 use rabbit_borough::configuration::config_model::JSONConfiguration;
-use rabbit_borough::consumer::consumer::consume;
-use rabbit_borough::consumer::consumer::DeliveredMessage;
+use rabbit_borough::consumer::actions::consume;
+use rabbit_borough::consumer::actions::DeliveredMessage;
 use rabbit_borough::consumer::handle_message_result::HandleMessageResult;
 
 fn main() {

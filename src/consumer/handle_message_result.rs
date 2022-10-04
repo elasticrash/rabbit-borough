@@ -1,7 +1,7 @@
-use lapin::Channel;
-use lapin::options::BasicNackOptions;
 use lapin::options::BasicAckOptions;
+use lapin::options::BasicNackOptions;
 use lapin::types::LongLongUInt;
+use lapin::Channel;
 
 pub enum HandleMessageResult {
     Ack,
