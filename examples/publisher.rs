@@ -1,9 +1,9 @@
 extern crate rabbit_borough;
 
-use futures_executor::LocalPool;
+use futures::executor::LocalPool;
 use rabbit_borough::configuration;
 use rabbit_borough::configuration::config_model::JSONConfiguration;
-use rabbit_borough::publisher::publisher::publish;
+use rabbit_borough::publisher::actions::publish;
 use std::{thread, time};
 
 fn main() {

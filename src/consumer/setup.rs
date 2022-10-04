@@ -76,12 +76,12 @@ pub async fn setup_consumer(
         );
     }
 
-    return SetupModel {
+    SetupModel {
         channel,
         queue,
         exchange,
         binding,
-    };
+    }
 }
 
 /// # Creates an exchange
@@ -91,15 +91,14 @@ async fn create_exchange(
     channel: Channel,
     options: ExchangeDeclareOptions,
 ) -> Result<(), Error> {
-    let exchange = channel
+    channel
         .exchange_declare(
             exchange,
             ExchangeKind::Fanout,
             options,
             FieldTable::default(),
         )
-        .wait();
-    return exchange;
+        .await
 }
 
 /// # Binds the exchange with a queue
@@ -110,7 +109,7 @@ async fn create_exchange_queue_binding(
     exchange: &str,
     routing_key: &str,
 ) -> Result<(), Error> {
-    let bind = channel
+    channel
         .queue_bind(
             queue,
             exchange,
@@ -118,7 +117,5 @@ async fn create_exchange_queue_binding(
             QueueBindOptions { nowait: false },
             FieldTable::default(),
         )
-        .wait();
-
-    return bind;
+        .await
 }

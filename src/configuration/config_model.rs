@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
 /// Top level configuration class
+#[derive(Default, Deserialize, Clone, Debug, Eq, PartialEq)]
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct JSONConfiguration {
     pub connection: ConnectionProperties,
     pub binding: BindingProperties,
@@ -10,8 +10,8 @@ pub struct JSONConfiguration {
 }
 
 /// All the properties required for creating a connection
+#[derive(Deserialize, Clone, Debug, Eq, PartialEq)]
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct ConnectionProperties {
     pub host: String,
     pub port: i32,
@@ -24,8 +24,8 @@ pub struct ConnectionProperties {
 }
 
 /// Configuration for binding an Queue to an Exchange
+#[derive(Deserialize, Clone, Debug, Eq, PartialEq)]
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct BindingProperties {
     pub queue: String,
     pub exchange: String,
@@ -34,16 +34,16 @@ pub struct BindingProperties {
 }
 
 /// Configuration on whether some setup should be deemed unnecessary
+#[derive(Deserialize, Clone, Debug, Eq, PartialEq)]
 #[serde(default)]
-#[derive(Deserialize, Clone, Debug, PartialEq)]
 pub struct DeclareProperties {
     pub queue: bool,
     pub exchange: bool,
     pub binding: bool,
 }
 
+#[derive(Deserialize, Copy, Clone, Debug, Eq, PartialEq)]
 #[serde(default)]
-#[derive(Deserialize, Copy, Clone, Debug, PartialEq)]
 pub struct ExchangeOptions {
     pub passive: bool,
     pub durable: bool,
@@ -56,16 +56,6 @@ impl Default for ExchangeOptions {
             passive: false,
             durable: true,
             auto_delete: true,
-        }
-    }
-}
-
-impl Default for JSONConfiguration {
-    fn default() -> JSONConfiguration {
-        JSONConfiguration {
-            connection: ConnectionProperties::default(),
-            binding: BindingProperties::default(),
-            declare: DeclareProperties::default(),
         }
     }
 }
@@ -91,7 +81,7 @@ impl Default for BindingProperties {
             queue: "myQueue".to_string(),
             exchange: "myExchange".to_string(),
             routing_key: "myKey".to_string(),
-            exchange_declaration_options: ExchangeOptions::default()
+            exchange_declaration_options: ExchangeOptions::default(),
         }
     }
 }

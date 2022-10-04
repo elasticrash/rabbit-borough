@@ -1,9 +1,9 @@
 extern crate rabbit_borough;
 
-use futures_executor::LocalPool;
+use futures::executor::LocalPool;
 use rabbit_borough::configuration;
 use rabbit_borough::configuration::config_model::JSONConfiguration;
-use rabbit_borough::publisher::publisher::publish_with_type;
+use rabbit_borough::publisher::actions::publish_with_type;
 use std::{thread, time};
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
                 &config.binding.exchange,
                 &config.binding.routing_key,
                 config.connection.clone(),
-                "ACTIVATE"
+                "ACTIVATE",
             )
             .await;
 
