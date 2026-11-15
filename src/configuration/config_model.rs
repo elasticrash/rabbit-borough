@@ -31,6 +31,7 @@ pub struct BindingProperties {
     pub exchange: String,
     pub routing_key: String,
     pub exchange_declaration_options: ExchangeOptions,
+    pub queue_declaration_options: QueueOptions,
 }
 
 /// Configuration on whether some setup should be deemed unnecessary
@@ -48,6 +49,27 @@ pub struct ExchangeOptions {
     pub passive: bool,
     pub durable: bool,
     pub auto_delete: bool,
+}
+
+/// Options used when declaring the queue.
+#[derive(Deserialize, Copy, Clone, Debug, Eq, PartialEq)]
+#[serde(default)]
+pub struct QueueOptions {
+    pub passive: bool,
+    pub durable: bool,
+    pub exclusive: bool,
+    pub auto_delete: bool,
+}
+
+impl Default for QueueOptions {
+    fn default() -> QueueOptions {
+        QueueOptions {
+            passive: false,
+            durable: true,
+            exclusive: false,
+            auto_delete: false,
+        }
+    }
 }
 
 impl Default for ExchangeOptions {
@@ -82,6 +104,7 @@ impl Default for BindingProperties {
             exchange: "myExchange".to_string(),
             routing_key: "myKey".to_string(),
             exchange_declaration_options: ExchangeOptions::default(),
+            queue_declaration_options: QueueOptions::default(),
         }
     }
 }

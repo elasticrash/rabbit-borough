@@ -1,9 +1,8 @@
 use crate::configuration::config_model::ConnectionProperties as LocalProperties;
-use futures_lite::Future;
-use lapin::{Channel, Error};
-use lapin::{Connection, ConnectionProperties};
-use std::pin::Pin;
-use std::{thread, time};
+use async_io::Timer;
+use lapin::{Channel, Connection, ConnectionProperties, Error};
+use percent_encoding::{NON_ALPHANUMERIC, utf8_percent_encode};
+use std::time::Duration;
 
 #[derive(Debug)]
 pub struct GenericError<T> {
@@ -18,35 +17,31 @@ pub enum ErrorType {
     Unknown,
 }
 
-/// Returns a Connection, retries x times
-/// This is an async resursive function
-pub fn get_connection<'a>(
-    addr: &'a str,
+/// Returns a Connection.
+/// The first attempt is made immediately; on failure it waits `attempt` seconds
+pub async fn get_connection(
+    addr: &str,
     retry: u64,
     total_retries: u64,
-) -> Pin<Box<dyn Future<Output = Result<Connection, GenericError<Error>>> + 'a>> {
-    Box::pin(async move {
-        let con_promise = Connection::connect(addr, ConnectionProperties::default());
-        let conn_res = con_promise.await;
-        let connection = match conn_res {
-            Ok(c) => Ok(c),
+) -> Result<Connection, GenericError<Error>> {
+    let mut attempt = retry;
+    loop {
+        match Connection::connect(addr, ConnectionProperties::default()).await {
+            Ok(connection) => return Ok(connection),
             Err(why) => {
                 println!("[{}] - {:?}", line!(), why);
-                if retry > total_retries {
-                    Err(GenericError {
+                if attempt >= total_retries {
+                    return Err(GenericError {
                         why: ErrorType::MaximumConnectionRetriesReached,
                         last_reason: why,
-                    })
-                    .unwrap()
+                    });
                 }
-                let hibernate = time::Duration::from_millis(retry * 1000);
-                thread::sleep(hibernate);
-                let c = get_connection(addr, retry + 1, total_retries);
-                c.await
+                attempt += 1;
+                // async sleep: never block the executor thread
+                Timer::after(Duration::from_secs(attempt)).await;
             }
-        };
-        connection
-    })
+        }
+    }
 }
 
 /// # builds URL
@@ -56,32 +51,53 @@ pub fn get_connection<'a>(
 pub fn build_url(config: LocalProperties) -> String {
     format!(
         "amqp://{}:{}@{}:{}/{}?heartbeat={}&connection_timeout={}",
-        config.username,
-        config.password,
+        utf8_percent_encode(&config.username, NON_ALPHANUMERIC),
+        utf8_percent_encode(&config.password, NON_ALPHANUMERIC),
         config.host,
         config.port,
-        config.vhost,
+        utf8_percent_encode(&config.vhost, NON_ALPHANUMERIC),
         config.heartbeat,
         config.connection_timeout
     )
 }
 
-/// # Creates a channel
-/// * Gets a valid connection
-/// * Returns a channel
-pub async fn create_channel(
+/// # Creates a connection and a channel on it
+/// * Gets a valid connection (retrying up to `total_retries` times)
+/// * Returns the connection together with a channel
+///
+/// The caller owns the connection and should `close` it when done,
+/// otherwise it stays open in the background.
+pub async fn create_connection_and_channel(
     addr: &str,
     total_retries: u64,
-) -> Result<Channel, GenericError<lapin::Error>> {
+) -> Result<(Connection, Channel), GenericError<Error>> {
     let conn = get_connection(addr, 0, total_retries).await?;
 
     match conn.create_channel().await {
-        Ok(ch) => Ok(ch),
-        Err(why) => Err(GenericError {
-            why: ErrorType::CannotCreateChannel,
-            last_reason: why,
-        }),
+        Ok(ch) => Ok((conn, ch)),
+        Err(why) => {
+            let _ = conn.close(0, "cannot create channel".into()).await;
+            Err(GenericError {
+                why: ErrorType::CannotCreateChannel,
+                last_reason: why,
+            })
+        }
     }
+}
+
+/// # Creates a channel
+/// * Gets a valid connection
+/// * Returns a channel
+///
+/// The underlying connection stays open for as long as the channel is in use.
+/// Prefer [`create_connection_and_channel`] if you need to close it afterwards.
+pub async fn create_channel(
+    addr: &str,
+    total_retries: u64,
+) -> Result<Channel, GenericError<Error>> {
+    create_connection_and_channel(addr, total_retries)
+        .await
+        .map(|(_, channel)| channel)
 }
 
 #[cfg(test)]
@@ -93,7 +109,21 @@ mod tests {
     fn amqp_url_generated_succesfully() {
         let url = build_url(ConnectionProperties::default());
         assert_eq!(
-            "amqp://guest:guest@127.0.0.1:5672//?heartbeat=10&connection_timeout=1000",
+            "amqp://guest:guest@127.0.0.1:5672/%2F?heartbeat=10&connection_timeout=1000",
+            url
+        );
+    }
+
+    #[test]
+    fn amqp_url_escapes_credentials_and_vhost() {
+        let url = build_url(ConnectionProperties {
+            username: "us:er".to_string(),
+            password: "p@ss/word".to_string(),
+            vhost: "my vhost".to_string(),
+            ..ConnectionProperties::default()
+        });
+        assert_eq!(
+            "amqp://us%3Aer:p%40ss%2Fword@127.0.0.1:5672/my%20vhost?heartbeat=10&connection_timeout=1000",
             url
         );
     }

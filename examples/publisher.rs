@@ -1,10 +1,8 @@
-extern crate rabbit_borough;
-
 use futures::executor::LocalPool;
 use rabbit_borough::configuration;
 use rabbit_borough::configuration::config_model::JSONConfiguration;
 use rabbit_borough::publisher::actions::publish;
-use std::{thread, time};
+use std::time::Duration;
 
 fn main() {
     let config: JSONConfiguration = configuration::reader::read("./config.json").unwrap();
@@ -22,8 +20,7 @@ fn main() {
 
             println!("[{}] - {:?}", line!(), outcome);
 
-            let delay = time::Duration::from_millis(500);
-            thread::sleep(delay);
+            async_io::Timer::after(Duration::from_millis(500)).await;
         }
     });
 }

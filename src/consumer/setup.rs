@@ -1,18 +1,19 @@
 use crate::configuration::config_model::BindingProperties;
 use crate::configuration::config_model::ConnectionProperties;
 use crate::configuration::config_model::DeclareProperties;
+use crate::consumer::connection_manager::GenericError;
 use crate::consumer::connection_manager::build_url;
-use crate::consumer::connection_manager::create_channel;
-use lapin::options::ExchangeDeclareOptions;
-use lapin::options::*;
-use lapin::types::FieldTable;
+use crate::consumer::connection_manager::create_connection_and_channel;
 use lapin::Channel;
+use lapin::Connection;
 use lapin::Error;
 use lapin::ExchangeKind;
 use lapin::Queue;
+use lapin::options::*;
+use lapin::types::FieldTable;
 
-#[derive(Clone)]
 pub struct SetupModel {
+    pub connection: Connection,
     pub channel: Channel,
     pub queue: Option<Result<Queue, Error>>,
     pub exchange: Option<Result<(), Error>>,
@@ -25,21 +26,30 @@ pub struct SetupModel {
 ///  * Declares the Exchange
 ///  * Declares the Binding between the Exchange and the Queue
 ///
+/// Returns an error if no connection could be established after
+/// exhausting all configured retries.
 pub async fn setup_consumer(
     connection: ConnectionProperties,
     bind: BindingProperties,
     declare: DeclareProperties,
-) -> SetupModel {
-    let channel = create_channel(build_url(connection.clone()).as_str(), connection.retry)
-        .await
-        .expect("channel to be created");
+) -> Result<SetupModel, GenericError<Error>> {
+    let (conn, channel) =
+        create_connection_and_channel(build_url(connection.clone()).as_str(), connection.retry)
+            .await?;
+
     let mut queue = None;
     if declare.queue {
         queue = Some(
             channel
                 .queue_declare(
-                    &bind.queue,
-                    QueueDeclareOptions::default(),
+                    bind.queue.as_str().into(),
+                    QueueDeclareOptions {
+                        passive: bind.queue_declaration_options.passive,
+                        durable: bind.queue_declaration_options.durable,
+                        exclusive: bind.queue_declaration_options.exclusive,
+                        auto_delete: bind.queue_declaration_options.auto_delete,
+                        nowait: false,
+                    },
                     FieldTable::default(),
                 )
                 .await,
@@ -50,7 +60,7 @@ pub async fn setup_consumer(
         exchange = Some(
             create_exchange(
                 &bind.exchange,
-                channel.clone(),
+                &channel,
                 ExchangeDeclareOptions {
                     passive: bind.exchange_declaration_options.passive,
                     durable: bind.exchange_declaration_options.durable,
@@ -66,34 +76,30 @@ pub async fn setup_consumer(
     let mut binding = None;
     if declare.binding {
         binding = Some(
-            create_exchange_queue_binding(
-                channel.clone(),
-                &bind.queue,
-                &bind.exchange,
-                &bind.routing_key,
-            )
-            .await,
+            create_exchange_queue_binding(&channel, &bind.queue, &bind.exchange, &bind.routing_key)
+                .await,
         );
     }
 
-    SetupModel {
+    Ok(SetupModel {
+        connection: conn,
         channel,
         queue,
         exchange,
         binding,
-    }
+    })
 }
 
 /// # Creates an exchange
 /// * Returns an exchange
 async fn create_exchange(
     exchange: &str,
-    channel: Channel,
+    channel: &Channel,
     options: ExchangeDeclareOptions,
 ) -> Result<(), Error> {
     channel
         .exchange_declare(
-            exchange,
+            exchange.into(),
             ExchangeKind::Fanout,
             options,
             FieldTable::default(),
@@ -104,16 +110,16 @@ async fn create_exchange(
 /// # Binds the exchange with a queue
 /// * Returns the binding
 async fn create_exchange_queue_binding(
-    channel: Channel,
+    channel: &Channel,
     queue: &str,
     exchange: &str,
     routing_key: &str,
 ) -> Result<(), Error> {
     channel
         .queue_bind(
-            queue,
-            exchange,
-            routing_key,
+            queue.into(),
+            exchange.into(),
+            routing_key.into(),
             QueueBindOptions { nowait: false },
             FieldTable::default(),
         )

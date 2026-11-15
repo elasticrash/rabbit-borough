@@ -1,13 +1,11 @@
-extern crate rabbit_borough;
-
 use futures::executor::LocalPool;
 use postgres::NoTls;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use rabbit_borough::configuration;
 use rabbit_borough::configuration::config_model::JSONConfiguration;
-use rabbit_borough::consumer::actions::consume_with_option;
 use rabbit_borough::consumer::actions::DeliveredMessage;
+use rabbit_borough::consumer::actions::consume_with_option;
 use rabbit_borough::consumer::handle_message_result::HandleMessageResult;
 
 #[derive(Debug)]
@@ -28,12 +26,13 @@ fn main() {
     let pool = r2d2::Pool::new(manager).unwrap();
 
     LocalPool::new().run_until(async {
-        consume_with_option(
+        let why = consume_with_option(
             &config,
             &handler,
             Some(&ConsumerProperties { db_pool: pool }),
         )
         .await;
+        println!("[{}] - giving up: {:?}", line!(), why);
     })
 }
 
@@ -66,5 +65,5 @@ fn handler(
         )
         .unwrap();
 
-    return HandleMessageResult::Ack;
+    HandleMessageResult::Ack
 }

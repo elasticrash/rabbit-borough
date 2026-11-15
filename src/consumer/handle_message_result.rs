@@ -1,8 +1,10 @@
+use lapin::Channel;
+use lapin::Error;
 use lapin::options::BasicAckOptions;
 use lapin::options::BasicNackOptions;
 use lapin::types::LongLongUInt;
-use lapin::Channel;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HandleMessageResult {
     Ack,
     NackNoRequeue,
@@ -12,13 +14,16 @@ pub enum HandleMessageResult {
 /// Consumer Acknowledgements
 /// Sends Positive or Negative Acknowledgement
 /// * Requeues if needed
-pub async fn action_result(result: HandleMessageResult, channel: &Channel, tag: LongLongUInt) {
+pub async fn action_result(
+    result: HandleMessageResult,
+    channel: &Channel,
+    tag: LongLongUInt,
+) -> Result<(), Error> {
     match result {
         HandleMessageResult::Ack => {
             channel
                 .basic_ack(tag, BasicAckOptions { multiple: false })
                 .await
-                .expect("basic_ack");
         }
         HandleMessageResult::NackNoRequeue => {
             channel
@@ -30,7 +35,6 @@ pub async fn action_result(result: HandleMessageResult, channel: &Channel, tag: 
                     },
                 )
                 .await
-                .expect("basic_ack");
         }
         HandleMessageResult::NackWithRequeue => {
             channel
@@ -42,7 +46,6 @@ pub async fn action_result(result: HandleMessageResult, channel: &Channel, tag: 
                     },
                 )
                 .await
-                .expect("basic_ack");
         }
     }
 }

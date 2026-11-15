@@ -10,14 +10,16 @@ fn main() {
     println!("[{}] - Configuration read", line!(),);
 
     LocalPool::new().run_until(async {
-        consume(&config, &handler).await;
+        // only returns once all connection retries are exhausted
+        let why = consume(&config, &handler).await;
+        println!("giving up: {:?}", why);
     })
 }
 
 fn handler(_delivery: &DeliveredMessage) -> HandleMessageResult {
     // In order to read the message you need to convert the _delivery.data from a u8 vec to a utf8 string :
     // std::str::from_utf8(&_delivery.data))
-    return HandleMessageResult::Ack;
+    HandleMessageResult::Ack
 }
 ```
 
@@ -40,8 +42,7 @@ fn main() {
 
             println!("[{}] - {:?}", line!(), outcome);
 
-            let delay = time::Duration::from_millis(500);
-            thread::sleep(delay);
+            async_io::Timer::after(Duration::from_millis(500)).await;
         }
     });
 }
@@ -72,6 +73,12 @@ This is a full example
         "exchange_declaration_options": {
             "passive": false,
             "durable": true,
+            "auto_delete": false
+        },
+        "queue_declaration_options": {
+            "passive": false,
+            "durable": true,
+            "exclusive": false,
             "auto_delete": false
         }
     },

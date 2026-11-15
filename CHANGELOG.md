@@ -1,3 +1,25 @@
+### 0.2.0
+
+#### Breaking changes
+
+* Upgraded to lapin 4
+* `consume` / `consume_with_option` now return `GenericError<lapin::Error>` once connection retries are exhausted, instead of panicking
+* `setup_consumer` returns `Result<SetupModel, GenericError<lapin::Error>>`
+* `create_consumer` and `action_result` return `Result` instead of panicking
+* Queues are declared durable by default. Set `durable: false` to keep the old behaviour on RabbitMQ 3.x
+* Username, password and vhost are now percent-encoded in the AMQP URL (the default vhost `/` becomes `%2F`)
+
+#### Bug fixes
+
+* Publisher returns `PublishError` instead of panicking when it cannot connect
+* `get_connection` returns an error after the last retry instead of panicking, and no longer blocks the executor thread while waiting
+* Consumer reconnects on delivery/ack errors instead of panicking, logs failed queue/exchange/binding declarations, and waits before reconnecting
+* Configuration reader falls back to defaults on unreadable files instead of panicking
+
+### 0.1.7
+
+* Upgraded dependencies
+
 ### 0.1.6
 
 * Fixed typo on connection string
